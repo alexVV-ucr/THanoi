@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+
 /**
  *
  * @author Estudiante
@@ -45,22 +46,24 @@ public class VentanaPrincipal extends javax.swing.JFrame {
          */
         modelTablaTorreA = (DefaultTableModel) TorreA.getModel();
         modelTablaTorreA.setRowCount(FICHAS);
+
+        modelTablaTorreB = (DefaultTableModel) TorreB.getModel();
+        modelTablaTorreB.setRowCount(FICHAS);
+
+        modelTablaTorreC = (DefaultTableModel) TorreC.getModel();
+        modelTablaTorreB.setRowCount(FICHAS);
+
         DefaultTableCellRenderer rederA = new DefaultTableCellRenderer();
         rederA.setHorizontalAlignment(SwingConstants.CENTER);
         TorreA.getColumnModel().getColumn(0).setCellRenderer(rederA);
 
-        modelTablaTorreB = (DefaultTableModel) TorreB.getModel();
-        modelTablaTorreB.setRowCount(FICHAS);
         DefaultTableCellRenderer rederB = new DefaultTableCellRenderer();
         rederB.setHorizontalAlignment(SwingConstants.CENTER);
         TorreB.getColumnModel().getColumn(0).setCellRenderer(rederB);
 
-        modelTablaTorreC = (DefaultTableModel) TorreC.getModel();
-        modelTablaTorreB.setRowCount(FICHAS);
         DefaultTableCellRenderer rederC = new DefaultTableCellRenderer();
         rederC.setHorizontalAlignment(SwingConstants.CENTER);
         TorreC.getColumnModel().getColumn(0).setCellRenderer(rederC);
-
     }
 
     /*
@@ -92,6 +95,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }
 
     private void Iniciar() throws MyException {
+
         PilaTA = new Pila();
         PilaTB = new Pila();
         PilaTC = new Pila();
@@ -115,7 +119,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                  */
                 for (int j = i; j > 0; j--) {
 
-                    disco += "▬";
+                    disco += "͟͟";
                 }
 
                 plataform.setDato(disco);
@@ -137,6 +141,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         modelTablaTorreA.setRowCount(FICHAS);
 
         Nodo n;
+
         int rowDisco = (FICHAS - PilaTA.getContNodo());
 
         if (PilaTA.getContNodo() > 0) {
@@ -173,7 +178,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 modelTablaTorreB.insertRow(rowDisco, vector);
             }
         }
-        TorreA.setModel(modelTablaTorreB);
+        TorreB.setModel(modelTablaTorreB);
         modelTablaTorreB.setRowCount(FICHAS);
     }
 
@@ -200,14 +205,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         modelTablaTorreC.setRowCount(FICHAS);
     }
 
-    
-    private void MoverAaB() throws MyException{
-        
+    private void MoverAaB() throws MyException {
+
         try {
             if (PilaTA.getContNodo() > 0) {
                 Nodo plataform = new Nodo();
                 plataform.setDato(PilaTA.Peek());
-                
+
                 if (PilaTB.getContNodo() > 0) {
                     //Reglas de hanoi encontrar sinficha es mayor 
                     //que la qie va a ingresar
@@ -215,18 +219,213 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         return;
                     }
                 }
-                
+
                 PilaTA.Pop();
                 PilaTB.Push(plataform);
-                
+
                 presentarTorreA();
                 presentarTorreB();
-                presentarTorreC();
-                
+                presentarCantMovi();
             }
         } catch (Exception e) {
             throw new MyException("No se pudo mover la ficha de torre");
         }
+    }
+
+    private void MoverAaC() throws MyException {
+
+        try {
+            if (PilaTA.getContNodo() > 0) {
+                Nodo plataform = new Nodo();
+                plataform.setDato(PilaTA.Peek());
+
+                if (PilaTC.getContNodo() > 0) {
+                    //Reglas de hanoi encontrar sinficha es mayor 
+                    //que la qie va a ingresar
+                    if (plataform.getDato().compareTo(PilaTC.Peek()) > 0) {
+                        return;
+                    }
+                }
+
+                PilaTA.Pop();
+                PilaTC.Push(plataform);
+
+                presentarTorreA();
+                presentarTorreC();
+                presentarCantMovi();
+
+                if (PilaTC.getContNodo() == objetivo && conNumMovi == numMinMovi) {
+                    JOptionPane.showMessageDialog(null, "Felicidades has logrado el minimo de movimientos\n\n "
+                            + "                             Intenta otro nivel");
+                } else if (PilaTC.getContNodo() == objetivo && conNumMovi != numMinMovi) {
+                    JOptionPane.showMessageDialog(null, "Felicidades lo has logrado\n\n "
+                            + "                             Intenta otro nivel");
+                }
+
+            }
+        } catch (Exception e) {
+            throw new MyException("No se pudo mover la ficha de torre");
+        }
+    }
+
+    private void MoverBaA() throws MyException {
+
+        try {
+            if (PilaTB.getContNodo() > 0) {
+                Nodo plataform = new Nodo();
+                plataform.setDato(PilaTB.Peek());
+
+                if (PilaTA.getContNodo() > 0) {
+                    //Reglas de hanoi encontrar sinficha es mayor 
+                    //que la qie va a ingresar
+                    if (plataform.getDato().compareTo(PilaTA.Peek()) > 0) {
+                        return;
+                    }
+                }
+
+                PilaTB.Pop();
+                PilaTA.Push(plataform);
+
+                presentarTorreA();
+                presentarTorreB();
+                presentarCantMovi();
+            }
+        } catch (Exception e) {
+            throw new MyException("No se pudo mover la ficha de torre");
+        }
+    }
+
+    private void MoverBaC() throws MyException {
+
+        try {
+            if (PilaTB.getContNodo() > 0) {
+                Nodo plataform = new Nodo();
+                plataform.setDato(PilaTB.Peek());
+
+                if (PilaTC.getContNodo() > 0) {
+                    //Reglas de hanoi encontrar sinficha es mayor 
+                    //que la qie va a ingresar
+                    if (plataform.getDato().compareTo(PilaTC.Peek()) > 0) {
+                        return;
+                    }
+                }
+
+                PilaTB.Pop();
+                PilaTC.Push(plataform);
+
+                presentarTorreB();
+                presentarTorreC();
+                presentarCantMovi();
+
+                if (PilaTC.getContNodo() == objetivo && conNumMovi == numMinMovi) {
+                    JOptionPane.showMessageDialog(null, "Felicidades has logrado el minimo de movimientos\n\n "
+                            + "                             Intenta otro nivel");
+                } else if (PilaTC.getContNodo() == objetivo && conNumMovi != numMinMovi) {
+                    JOptionPane.showMessageDialog(null, "Felicidades lo has logrado\n\n "
+                            + "                             Intenta otro nivel");
+                }
+
+            }
+        } catch (Exception e) {
+            throw new MyException("No se pudo mover la ficha de torre");
+        }
+    }
+
+    private void MoverCaA() throws MyException {
+
+        try {
+            if (PilaTC.getContNodo() > 0) {
+                Nodo plataform = new Nodo();
+                plataform.setDato(PilaTC.Peek());
+
+                if (PilaTA.getContNodo() > 0) {
+                    //Reglas de hanoi encontrar sinficha es mayor 
+                    //que la qie va a ingresar
+                    if (plataform.getDato().compareTo(PilaTA.Peek()) > 0) {
+                        return;
+                    }
+                }
+
+                PilaTC.Pop();
+                PilaTA.Push(plataform);
+
+                presentarTorreA();
+                presentarTorreC();
+                presentarCantMovi();
+            }
+        } catch (Exception e) {
+            throw new MyException("No se pudo mover la ficha de torre");
+        }
+    }
+
+    private void MoverCaB() throws MyException {
+
+        try {
+            if (PilaTC.getContNodo() > 0) {
+                Nodo plataform = new Nodo();
+                plataform.setDato(PilaTC.Peek());
+
+                if (PilaTB.getContNodo() > 0) {
+                    //Reglas de hanoi encontrar sinficha es mayor 
+                    //que la qie va a ingresar
+                    if (plataform.getDato().compareTo(PilaTB.Peek()) > 0) {
+                        return;
+                    }
+                }
+
+                PilaTC.Pop();
+                PilaTB.Push(plataform);
+
+                presentarTorreB();
+                presentarTorreC();
+                presentarCantMovi();
+            }
+        } catch (Exception e) {
+            throw new MyException("No se pudo mover la ficha de torre");
+        }
+    }
+
+    
+    private void MoverPlatform(Pila origen, Pila destino){
+    boolean stop = false;
+    
+        if (stop == false) {
+            Nodo plataform = new Nodo();
+            plataform.setDato(origen.Peek());
+            origen.Pop();
+            destino.Push(plataform);
+            
+            presentarTorreA();
+            presentarTorreB();
+            presentarTorreC();
+            presentarCantMovi();
+            
+            JOptionPane pane = new JOptionPane("paso # " + lbl_Nmovi.getText()
+                    +"\n\nContinuar?",JOptionPane.QUESTION_MESSAGE, JOptionPane.YES_NO_OPTION);
+            JDialog dialog = pane.createDialog("Numero de pasos");
+            dialog.setLocation(500, 400);
+            
+            dialog.setVisible(true);
+            
+            int opt = (int) pane.getValue();
+            
+            if (opt == JOptionPane.NO_OPTION) {
+                stop = true;
+            }
+        }
+    }
+    
+    private void HanoiRecursivo(int tamano, Pila origen, Pila auxiliar, Pila destino){
+    
+        if (tamano == 1) {
+            MoverPlatform(origen, destino);
+        }else{
+            HanoiRecursivo(tamano - 1, origen, destino, auxiliar);
+            MoverPlatform(origen, destino);
+            
+            HanoiRecursivo(tamano - 1, auxiliar, origen, destino);
+        }
+        
     }
     /**
      *
@@ -516,9 +715,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void bt_iniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_iniciarActionPerformed
         try {
             // TODO add your handling code here:
+            conNumMovi = 0;
             Iniciar();
         } catch (MyException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(new MyException("No ingreso"));
         }
     }//GEN-LAST:event_bt_iniciarActionPerformed
 
@@ -528,21 +729,26 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             Reiniciar();
         } catch (MyException ex) {
             Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(new MyException("No ingreso"));
         }
     }//GEN-LAST:event_bt_reiniciarActionPerformed
 
 
     private void bt_resolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bt_resolverActionPerformed
-        // TODO add your handling code here:
-//        if (!l_minMov.getText().equals("") && Pila_TorreC.getContNodo() != objetivo) {
-//            
-//            Reiniciar();
-//
-//            detiene = false;
-//
-//            ResolverHanoiRecursivo(objetivo, Pila_TorreA, Pila_TorreB, Pila_TorreC);
-//
-//        }
+         // TODO add your handling code here:
+        if (!l_minMov.getText().equals("") && PilaTC.getContNodo() != objetivo) {
+            
+            try {
+                Reiniciar();
+            } catch (MyException ex) {
+                Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            detener = false;
+
+            HanoiRecursivo(objetivo, PilaTA, PilaTB, PilaTC);
+
+        }
     }//GEN-LAST:event_bt_resolverActionPerformed
 
     private void btn_abActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_abActionPerformed
@@ -556,29 +762,49 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_abActionPerformed
 
     private void btn_acActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_acActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
 
-        //Moverde_AC();
+            MoverAaC();
+        } catch (MyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_acActionPerformed
 
     private void btn_baActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_baActionPerformed
-        // TODO add your handling code here:
-       // Moverde_BA();
+        try {
+            // TODO add your handling code here:
+            MoverBaA();
+        } catch (MyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_baActionPerformed
 
     private void btn_bcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_bcActionPerformed
-        // TODO add your handling code here:
-       // Moverde_BC();
+        try {
+            // TODO add your handling code here:
+            MoverBaC();
+        } catch (MyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_bcActionPerformed
 
     private void btn_caActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_caActionPerformed
-        // TODO add your handling code here:
-      //  Moverde_CA();
+        try {
+            // TODO add your handling code here:
+            MoverCaA();
+        } catch (MyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_caActionPerformed
 
     private void btn_cbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cbActionPerformed
-        // TODO add your handling code here:
-      //  Moverde_CB();
+        try {
+            // TODO add your handling code here:
+            MoverCaB();
+        } catch (MyException ex) {
+            Logger.getLogger(VentanaPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_cbActionPerformed
 
     private void cb_numDiscosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cb_numDiscosActionPerformed
